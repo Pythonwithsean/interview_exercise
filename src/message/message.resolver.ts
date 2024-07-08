@@ -129,7 +129,11 @@ export class MessageResolver {
     @Args('likeMessageDto') likeMessageDto: LikeMessageDto,
     @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
   ): Promise<ChatMessage> {
-    await this.messageLogic.like(likeMessageDto, authenticatedUser);
+    const likeConversationMessage = await this.messageLogic.like(
+      likeMessageDto,
+      authenticatedUser,
+    );
+    return likeConversationMessage;
   }
 
   @Mutation(() => ChatMessage)
