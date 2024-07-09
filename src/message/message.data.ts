@@ -17,7 +17,7 @@ export class MessageData {
   constructor(
     @InjectModel(ChatMessageModel.name)
     protected chatMessageModel: Model<ChatMessageDocument>,
-  ) {}
+  ) { }
 
   async create(
     data: MessageDto,
@@ -87,14 +87,17 @@ export class MessageData {
 
   async delete(messageId: ObjectID): Promise<ChatMessage> {
     // TODO allow a message to be marked as deleted
-    if (!ObjectID.isValid(messageId)) {
-      console.error('Message-id is not Valid');
-      return new ChatMessage();
-    }
-    const deletedMessage = new ChatMessage();
-    deletedMessage.id = messageId;
-    deletedMessage.deleted = true;
-    return deletedMessage; // Minimum to pass ts checks -replace this
+    return await this.chatMessageModel.findOneAndUpdate(
+      { _id: messageId },
+      { deleted: true },
+      {
+        new: true,
+        returnOriginal: false,
+      },
+    ).then((message) => {
+      if (!message) throw new Error('Message not found');
+      return chatMessageToObject(message);
+    });
   }
 
   async resolve(messageId: ObjectID): Promise<ChatMessage> {

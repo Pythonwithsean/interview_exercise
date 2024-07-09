@@ -5,7 +5,7 @@ import { MessageData } from './message.data';
 import { ChatMessageModel, ChatMessageSchema } from './models/message.model';
 
 import { ConfigManagerModule } from '../configuration/configuration-manager.module';
-import {getTestConfiguration}  from '../configuration/configuration-manager.utils';
+import { getTestConfiguration } from '../configuration/configuration-manager.utils';
 
 const id = new ObjectID('5fe0cce861c8ea54018385af');
 const conversationId = new ObjectID();
