@@ -78,7 +78,7 @@ export class MessageLogic implements IMessageLogic {
     private conversationData: ConversationData,
     private safeguardingService: SafeguardingService,
     private userBlocks: UserBlocksLogic,
-  ) {}
+  ) { }
 
   async create(
     messageDto: MessageDto,
@@ -121,6 +121,7 @@ export class MessageLogic implements IMessageLogic {
       message.id,
     );
 
+
     // Register the lastRead for the current user
     // The person who sent this message has obviously read it
     await this.conversationData.recordLastMessageReadByUser({
@@ -145,6 +146,7 @@ export class MessageLogic implements IMessageLogic {
       richContent: await this.mapRichContent(messageDto, message),
       resolved: message.resolved,
       isSenderBlocked: false,
+      tags: message.tags,
     });
 
     this.conversationChannel.send(sendMessageEvent, conversationId);
@@ -231,8 +233,7 @@ export class MessageLogic implements IMessageLogic {
       }))
     ) {
       console.error(
-        `User ${
-          authenticatedUser.userId
+        `User ${authenticatedUser.userId
         } is not authorised to read message ${messageId.toHexString()}`,
       );
       throw new ForbiddenError(`User is not authorised to read this message`);
@@ -313,7 +314,7 @@ export class MessageLogic implements IMessageLogic {
       paginatedChatMessages,
       blockedUserIds,
     );
-  
+
 
     return paginatedChatMessages;
   }

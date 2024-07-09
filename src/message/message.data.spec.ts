@@ -6,6 +6,8 @@ import { ChatMessageModel, ChatMessageSchema } from './models/message.model';
 
 import { ConfigManagerModule } from '../configuration/configuration-manager.module';
 import { getTestConfiguration } from '../configuration/configuration-manager.utils';
+import got from 'got';
+import { Message } from './message';
 
 const id = new ObjectID('5fe0cce861c8ea54018385af');
 const conversationId = new ObjectID();
@@ -67,7 +69,7 @@ describe('MessageData', () => {
     it('successfully creates a message', async () => {
       const conversationId = new ObjectID();
       const message = await messageData.create(
-        { conversationId, text: 'Hello world' },
+        { conversationId, text: 'Hello world', tags: ['tag1', 'tag2'] },
         senderId,
       );
 
@@ -83,6 +85,7 @@ describe('MessageData', () => {
           conversation: { id: conversationId.toHexString() },
           likesCount: 0,
           sender: { id: senderId.toHexString() },
+          tags: ['tag1', 'tag2']
         }
       );
 
@@ -90,7 +93,7 @@ describe('MessageData', () => {
   });
 
 
-  describe('get', () => {
+  describe('getMessage', () => {
     it('should be defined', () => {
       expect(messageData.getMessage).toBeDefined();
     });
@@ -107,6 +110,75 @@ describe('MessageData', () => {
       expect(gotMessage).toMatchObject(sentMessage)
     });
   });
+
+  describe('MessageTags should exist in message', () => {
+    it('should be defined', () => {
+      expect(messageData.getMessage).toBeDefined();
+    });
+
+    it('successfully gets a message and should contain tags', async () => {
+      const conversationId = new ObjectID();
+      const sentMessage = await messageData.create(
+        { conversationId, text: 'Hello world', tags: ['tag1', 'tag2'] },
+        senderId,
+      );
+
+      const gotMessage = await messageData.getMessage(sentMessage.id.toHexString())
+      if (!gotMessage.tags) {
+        throw new Error('Tags are not defined')
+      }
+      expect(gotMessage.tags).toContain('tag1')
+      expect(gotMessage.tags).toContain('tag2')
+    });
+  });
+
+  describe('updateTag', () => {
+    it('should be defined', () => {
+      expect(messageData.getMessage).toBeDefined();
+    });
+
+    it('successfully updates a message', async () => {
+      const conversationId = new ObjectID();
+      const message = await messageData.create(
+        { conversationId, text: 'Hello world', tags: ['tag1', 'tag2'] },
+        senderId,
+      );
+      await messageData.updateTag(message.id.toHexString(), ['tag3', 'tag4'])
+      const updatedMessage = await messageData.getMessage(message.id.toHexString())
+      if (!updatedMessage.tags) {
+        throw new Error('Tags are not defined')
+      }
+      expect(updatedMessage.tags).toContain('tag3')
+      expect(updatedMessage.tags).toContain('tag4')
+      expect(updatedMessage.tags).not.toContain('tag1')
+      expect(updatedMessage.tags).not.toContain('tag2')
+
+    });
+  });
+
+  describe('searchOnTags', () => {
+    it('should be defined', () => {
+      expect(messageData.getMessage).toBeDefined();
+    });
+
+    it('successfully searches for messages that contains Tag', async () => {
+      const conversationId = new ObjectID()
+      const message = await messageData.create(
+        { conversationId, text: 'Hello world', tags: ['tag1', 'tag2'] },
+        senderId,
+      );
+      const message2 = await messageData.create(
+        { conversationId, text: 'Hello Jack', tags: ['tag1', 'tag3'] },
+        senderId,
+      );
+      const searchResult = await messageData.findMessagesByTag('tag1')
+      expect(searchResult).toContainEqual(message)
+      expect(searchResult).toContainEqual(message2)
+
+    });
+  });
+
+
 
   describe('delete', () => {
     it('successfully marks a message as deleted', async () => {

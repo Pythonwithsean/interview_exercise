@@ -148,6 +148,11 @@ export class ChatMessage {
 
   @Field({ defaultValue: false, nullable: true })
   isSenderBlocked?: boolean;
+
+  //Add Tags to Chat Message Entity Tags type already exist 
+  @Field(() => [String], { nullable: true })
+  tags?: string[];
+
 }
 
 /***
@@ -176,6 +181,9 @@ export class SocketChatMessage {
   reactions?: Reaction[];
 
   isSenderBlocked?: boolean;
+
+  tags?: string[];
+
 }
 
 @ObjectType()

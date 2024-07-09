@@ -29,6 +29,7 @@ export class MessageData {
     chatMessage.conversationId = data.conversationId;
     chatMessage.created = new Date();
     chatMessage.deleted = false;
+    chatMessage.tags = data.tags
 
     createRichContent(data, chatMessage);
 
@@ -45,7 +46,6 @@ export class MessageData {
     data: GetMessageDto,
   ): Promise<PaginatedChatMessages> {
     let hasMore = false;
-
     // TODO Min - Max on limit. There is an issue
     // with using a limit of zero as it would return
     // all messages from a conversation
@@ -86,8 +86,7 @@ export class MessageData {
   }
 
   async delete(messageId: ObjectID): Promise<ChatMessage> {
-    // TODO allow a message to be marked as deleted
-    return await this.chatMessageModel.findOneAndUpdate(
+    const deletedMsg = await this.chatMessageModel.findOneAndUpdate(
       { _id: messageId },
       { deleted: true },
       {
@@ -98,6 +97,8 @@ export class MessageData {
       if (!message) throw new Error('Message not found');
       return chatMessageToObject(message);
     });
+
+    return deletedMsg
   }
 
   async resolve(messageId: ObjectID): Promise<ChatMessage> {
@@ -365,5 +366,16 @@ export class MessageData {
     }
 
     return chatMessageToObject(updatedResult);
+  }
+
+  async updateTag(messageId: string, tags: string[]): Promise<void> {
+    await this.chatMessageModel.findByIdAndUpdate(messageId, { tags: tags })
+  }
+
+  async findMessagesByTag(tag: string): Promise<ChatMessage[]> {
+    const chatMessages = await this.chatMessageModel.find({
+      tags: tag,
+    });
+    return chatMessages.map((chatMessage) => chatMessageToObject(chatMessage));
   }
 }
