@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import humps from 'humps';
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { User } from './models/user.model';
 import { UserCacheManagerService } from '../cache-manager/user-cache-manager.service';
 import { ConfigurationManager } from '../configuration/configuration-manager';
@@ -40,7 +40,6 @@ export class UserService implements IUserService {
       const parsedResponse = await response.json();
       return humps.camelizeKeys(parsedResponse);
     }
-
     throw new Error(
       `User Service request failed with error type: ${response.status} and message: ${response.statusText}`,
     );

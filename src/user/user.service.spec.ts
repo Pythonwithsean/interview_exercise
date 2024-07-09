@@ -51,10 +51,7 @@ describe('UserService', () => {
   });
 
   it('should return a userObject when calling request function correctly', async () => {
-    nock(user_service)
-      .get(`/api/v1/users/${userId}`)
-      .reply(200, userObject);
-
+    nock(user_service).get(`/api/v1/users/${userId}`).reply(200, userObject);
     expect(await service.requestFunction(userId)).toEqual(userObject);
   });
 
@@ -63,9 +60,7 @@ describe('UserService', () => {
   });
 
   it('should throw an error when the request fails ', async () => {
-    nock(user_service)
-      .get(`/api/v1/users/${userId}`)
-      .reply(403);
+    nock(user_service).get(`/api/v1/users/${userId}`).reply(403);
 
     await expect(service.requestFunction(userId)).rejects.toThrow(
       new Error(
