@@ -134,7 +134,7 @@ describe('MessageData', () => {
 
   describe('updateTag', () => {
     it('should be defined', () => {
-      expect(messageData.getMessage).toBeDefined();
+      expect(messageData.updateTag).toBeDefined();
     });
 
     it('successfully updates a message', async () => {
@@ -157,8 +157,9 @@ describe('MessageData', () => {
   });
 
   describe('searchOnTags', () => {
+
     it('should be defined', () => {
-      expect(messageData.getMessage).toBeDefined();
+      expect(messageData.findMessagesByTag).toBeDefined();
     });
 
     it('successfully searches for messages that contains Tag', async () => {
