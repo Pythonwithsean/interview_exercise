@@ -9,6 +9,7 @@ import { getTestConfiguration } from '../configuration/configuration-manager.uti
 import got from 'got';
 import { Message } from './message';
 import { MessageLogic } from './message.logic';
+import exp from 'constants';
 
 const id = new ObjectID('5fe0cce861c8ea54018385af');
 const conversationId = new ObjectID();
@@ -143,18 +144,19 @@ describe('MessageData', () => {
     it('successfully updates a message', async () => {
       const conversationId = new ObjectID();
       const message = await messageData.create(
-        { conversationId, text: 'Hello world', tags: ['tag1', 'tag2'] },
+        { conversationId, text: 'Hello world', tags: ['tag1'] },
         senderId,
       );
-      await messageData.updateTag(message.id.toHexString(), ['tag3', 'tag4'])
+      await messageData.updateTag(message.id, ['tag3', 'tag4'])
       const updatedMessage = await messageData.getMessage(message.id.toHexString())
       if (!updatedMessage.tags) {
         throw new Error('Tags are not defined')
       }
-      expect(updatedMessage.tags).toContain('tag3')
-      expect(updatedMessage.tags).toContain('tag4')
-      expect(updatedMessage.tags).not.toContain('tag1')
-      expect(updatedMessage.tags).not.toContain('tag2')
+      expect(updatedMessage.tags).toContain('tag3');
+      expect(updatedMessage.tags).toContain('tag4');
+      expect(updatedMessage.tags).not.toContain('tag1');
+      expect(updatedMessage.tags).not.toContain('tag2');
+      expect(updatedMessage.tags.length).toEqual(2);
 
     });
   });
@@ -162,7 +164,6 @@ describe('MessageData', () => {
 
   // Test to if all messaeges show up for a specifc tag
   describe('searchOnTags', () => {
-
     it('should be defined', () => {
       expect(messageData.findMessagesByTag).toBeDefined();
     });
@@ -178,12 +179,14 @@ describe('MessageData', () => {
         senderId,
       );
       const searchResult = await messageData.findMessagesByTag('tag1')
-      expect(searchResult).toContainEqual(message)
-      expect(searchResult).toContainEqual(message2)
+      expect(searchResult).toContainEqual(message);
+      expect(searchResult).toContainEqual(message2);
+      expect(searchResult.length).toEqual(2);
+      expect(searchResult[0].tags).toContain('tag1');
+      expect(searchResult[1].tags).toContain('tag1');
 
     });
   });
-
 
 
   describe('delete', () => {

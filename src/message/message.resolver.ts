@@ -226,7 +226,7 @@ export class RichMessageContentResolver {
   @Mutation(() => ChatMessage)
   @UseGuards(GqlAuthGuard)
   async updateConversationMessageTags(
-    @Args('messageId') messageId: string,
+    @Args('messageId') messageId: ObjectId,
     @Args('tags', { type: () => [String] }) tags: string[],
     @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
   ): Promise<ChatMessage> {

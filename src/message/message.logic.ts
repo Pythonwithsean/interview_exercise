@@ -65,8 +65,6 @@ export interface IMessageLogic {
   getMessagesByConversation(
     messagesFilterInput: MessagesFilterInput,
   ): Promise<MessageGroupedByConversationOutput[]>;
-
-
 }
 
 @Injectable()
@@ -245,11 +243,11 @@ export class MessageLogic implements IMessageLogic {
     return this.messageData.getMessage(messageId.toHexString());
   }
 
-  async updateTag(messageId: string, tags: string[], authenticatedUser: IAuthenticatedUser): Promise<ChatMessage> {
+  async updateTag(messageId: ObjectID, tags: string[], authenticatedUser: IAuthenticatedUser): Promise<ChatMessage> {
     //TODO: Implement permissions for updating tags
     // Check if user has permission to update tags
     await this.messageData.updateTag(messageId, tags);
-    return this.messageData.getMessage(messageId);
+    return this.messageData.getMessage(messageId.toHexString());
   }
 
   async findMessagesByTag(tag: string): Promise<ChatMessage[]> {

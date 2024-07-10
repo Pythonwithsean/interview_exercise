@@ -368,8 +368,8 @@ export class MessageData {
     return chatMessageToObject(updatedResult);
   }
 
-  async updateTag(messageId: string, tags: string[]): Promise<void> {
-    await this.chatMessageModel.findByIdAndUpdate(messageId, { tags: tags })
+  async updateTag(messageId: ObjectID, tags: string[]): Promise<void> {
+    await this.chatMessageModel.findByIdAndUpdate(messageId, { tags: tags });
   }
 
   async findMessagesByTag(tag: string): Promise<ChatMessage[]> {

@@ -162,7 +162,7 @@ type Mutation {
   removeReactionFromMessage(reactionDto: ReactionDto!): ChatMessage!
   addVote(option: String!, chatMessageId: ObjectId!): Poll!
   removeVote(option: String!, chatMessageId: ObjectId!): Poll!
-  updateConversationMessageTags(tags: [String!]!, messageId: String!): ChatMessage!
+  updateConversationMessageTags(tags: [String!]!, messageId: ObjectId!): ChatMessage!
 }
 
 input MarkReadMessageDTO {
