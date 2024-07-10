@@ -8,6 +8,7 @@ import { ConfigManagerModule } from '../configuration/configuration-manager.modu
 import { getTestConfiguration } from '../configuration/configuration-manager.utils';
 import got from 'got';
 import { Message } from './message';
+import { MessageLogic } from './message.logic';
 
 const id = new ObjectID('5fe0cce861c8ea54018385af');
 const conversationId = new ObjectID();
@@ -132,6 +133,8 @@ describe('MessageData', () => {
     });
   });
 
+
+  // Test to see if the message Tags Update
   describe('updateTag', () => {
     it('should be defined', () => {
       expect(messageData.updateTag).toBeDefined();
@@ -156,6 +159,8 @@ describe('MessageData', () => {
     });
   });
 
+
+  // Test to if all messaeges show up for a specifc tag
   describe('searchOnTags', () => {
 
     it('should be defined', () => {

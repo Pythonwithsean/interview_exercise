@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import {
   ChatMessage,
+  ChatMessageData,
   PaginatedChatMessages,
   PollOption,
   RichMessageContent,
@@ -64,6 +65,8 @@ export interface IMessageLogic {
   getMessagesByConversation(
     messagesFilterInput: MessagesFilterInput,
   ): Promise<MessageGroupedByConversationOutput[]>;
+
+
 }
 
 @Injectable()
@@ -240,6 +243,18 @@ export class MessageLogic implements IMessageLogic {
     }
 
     return this.messageData.getMessage(messageId.toHexString());
+  }
+
+  async updateTag(messageId: string, tags: string[], authenticatedUser: IAuthenticatedUser): Promise<ChatMessage> {
+    //TODO: Implement permissions for updating tags
+    // Check if user has permission to update tags
+    await this.messageData.updateTag(messageId, tags);
+    return this.messageData.getMessage(messageId);
+  }
+
+  async findMessagesByTag(tag: string): Promise<ChatMessage[]> {
+    const chatMessages = await this.messageData.findMessagesByTag(tag)
+    return chatMessages
   }
 
   private async getBlockedUserIds(

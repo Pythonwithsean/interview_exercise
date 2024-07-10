@@ -138,6 +138,7 @@ type Query {
   getChatConversation(id: String!): ChatConversation!
   getMessagesForChatConversation(getMessageDto: GetMessageDto!): [ChatMessage!]! @deprecated(reason: "This query has now been deprecated, please use getChatConversationMessages")
   getChatConversationMessages(getMessageDto: GetMessageDto!): PaginatedChatMessages!
+  searchMessagesByTag(tag: String!): [ChatMessage!]!
   conversationInboxDoNotUse: [ConversationInbox!]! @deprecated(reason: "Do not use query. See implementation for more details.")
 }
 
@@ -161,6 +162,7 @@ type Mutation {
   removeReactionFromMessage(reactionDto: ReactionDto!): ChatMessage!
   addVote(option: String!, chatMessageId: ObjectId!): Poll!
   removeVote(option: String!, chatMessageId: ObjectId!): Poll!
+  updateConversationMessageTags(tags: [String!]!, messageId: String!): ChatMessage!
 }
 
 input MarkReadMessageDTO {

@@ -13,7 +13,6 @@ import {
 import { ApiSecurity, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { HttpCode } from '@nestjs/common';
-
 import { XApiKeyGuard } from '../authentication/XApiKeyGuard';
 import { ConversationLogic } from './conversation.logic';
 import { ConversationMigrationLogic } from '../migrations/conversation/conversation.migration.logic';
@@ -41,7 +40,7 @@ export class ConversationController {
     private conversationLogic: ConversationLogic,
     private conversationMigrationLogic: ConversationMigrationLogic,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   @Post()
   @ApiSecurity('X-API-KEY')

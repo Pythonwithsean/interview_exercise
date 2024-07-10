@@ -54,7 +54,7 @@ export class MessageResolver {
   }
 
   @Mutation(() => ChatMessage)
-  @UseGuards(GqlAuthGuard)
+  // @UseGuards(GqlAuthGuard)
   async sendConversationMessage(
     @Args('messageDto') messageDto: MessageDto,
     @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
@@ -66,7 +66,7 @@ export class MessageResolver {
     deprecationReason:
       'This query has now been deprecated, please use getChatConversationMessages',
   })
-  @UseGuards(GqlAuthGuard)
+  // @UseGuards(GqlAuthGuard)
   async getMessagesForChatConversation(
     @Args('getMessageDto') getMessageDto: GetMessageDto,
     @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
@@ -222,5 +222,24 @@ export class RichMessageContentResolver {
 
     return response.richContent?.poll;
   }
+
+  @Mutation(() => ChatMessage)
+  @UseGuards(GqlAuthGuard)
+  async updateConversationMessageTags(
+    @Args('messageId') messageId: string,
+    @Args('tags', { type: () => [String] }) tags: string[],
+    @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
+  ): Promise<ChatMessage> {
+    return this.messageLogic.updateTag(messageId, tags, authenticatedUser);
+  }
+
+  @Query(() => [ChatMessage])
+  @UseGuards(GqlAuthGuard)
+  async searchMessagesByTag(
+    @Args('tag') tag: string,
+  ): Promise<ChatMessage[]> {
+    return this.messageLogic.findMessagesByTag(tag);
+  }
+
 
 }
