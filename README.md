@@ -86,6 +86,8 @@ We'd love to hear about
 * How you would go about testing
 * What you might do differently
 
+## Solution
+
 Currently We want to add tags to a conversation Message so we can help users find things that they are interested in by finding all messages that contain that specific tag 
 
 We also allow users to overwrite and update their tags on the message
