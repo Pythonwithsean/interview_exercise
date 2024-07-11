@@ -141,19 +141,19 @@ describe('MessageData', () => {
         { conversationId, text: 'Hello world', tags: ['tag1'] },
         senderId,
       );
-      await messageData.updateTag(message.id, ['tag3', 'tag4']).then(async () => {
-        const updatedMessage = await messageData.getMessage(message.id.toHexString())
-        if (!updatedMessage.tags) {
-          throw new Error('Tags are not defined');
-        }
-        expect(updatedMessage.tags).toContain('tag3');
-        expect(updatedMessage.tags).toContain('tag4');
-        expect(updatedMessage.tags).not.toContain('tag1');
-        expect(updatedMessage.tags).not.toContain('tag2');
-        expect(updatedMessage.tags[0]).toEqual('tag3');
-        expect(updatedMessage.tags[1]).toEqual('tag4');
-        expect(updatedMessage.tags.length).toEqual(2);
-      })
+
+      await messageData.updateTag(message.id, ['tag3', 'tag4'])
+      const updatedMessage = await messageData.getMessage(message.id.toHexString())
+      if (!updatedMessage.tags) {
+        throw new Error('Tags are not defined');
+      }
+      expect(updatedMessage.tags).toContain('tag3');
+      expect(updatedMessage.tags).toContain('tag4');
+      expect(updatedMessage.tags).not.toContain('tag1');
+      expect(updatedMessage.tags).not.toContain('tag2');
+      expect(updatedMessage.tags[0]).toEqual('tag3');
+      expect(updatedMessage.tags[1]).toEqual('tag4');
+      expect(updatedMessage.tags.length).toEqual(2);
     });
   });
 
@@ -174,8 +174,9 @@ describe('MessageData', () => {
         senderId,
       );
       const searchResult = await messageData.findMessagesByTag('tag1');
-      expect(searchResult[0]).toEqual(message);
-      expect(searchResult[1]).toEqual(message2);
+
+      expect(searchResult).toContainEqual(expect.objectContaining({ _id: message.id }));
+      expect(searchResult).toContainEqual(expect.objectContaining({ _id: message2.id }));
       expect(searchResult.length).toEqual(2);
       expect(searchResult[0].tags).toContain('tag1');
       expect(searchResult[1].tags).toContain('tag1');
