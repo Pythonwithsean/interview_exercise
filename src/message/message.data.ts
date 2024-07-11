@@ -94,7 +94,7 @@ export class MessageData {
       if (!message) throw new Error('Message not found');
       return chatMessageToObject(message);
     });
-    return deletedMsg
+    return deletedMsg;
   }
 
   async resolve(messageId: ObjectID): Promise<ChatMessage> {
@@ -370,7 +370,7 @@ export class MessageData {
 
   async findMessagesByTag(tag: string): Promise<ChatMessage[]> {
     const chatMessages = await this.chatMessageModel.find({
-      tags: tag,
+      tags: { $in: [tag] },
     });
     return chatMessages.map((chatMessage) => chatMessageToObject(chatMessage));
   }

@@ -144,12 +144,14 @@ describe('MessageData', () => {
       await messageData.updateTag(message.id, ['tag3', 'tag4'])
       const updatedMessage = await messageData.getMessage(message.id.toHexString())
       if (!updatedMessage.tags) {
-        throw new Error('Tags are not defined')
+        throw new Error('Tags are not defined');
       }
       expect(updatedMessage.tags).toContain('tag3');
       expect(updatedMessage.tags).toContain('tag4');
       expect(updatedMessage.tags).not.toContain('tag1');
       expect(updatedMessage.tags).not.toContain('tag2');
+      expect(updatedMessage.tags[0]).toEqual('tag3');
+      expect(updatedMessage.tags[1]).toEqual('tag4');
       expect(updatedMessage.tags.length).toEqual(2);
 
     });
@@ -161,9 +163,8 @@ describe('MessageData', () => {
     it('should be defined', () => {
       expect(messageData.findMessagesByTag).toBeDefined();
     });
-
     it('successfully searches for messages that contains Tag', async () => {
-      const conversationId = new ObjectID()
+      const conversationId = new ObjectID();
       const message = await messageData.create(
         { conversationId, text: 'Hello world', tags: ['tag1', 'tag2'] },
         senderId,
@@ -172,9 +173,9 @@ describe('MessageData', () => {
         { conversationId, text: 'Hello Jack', tags: ['tag1', 'tag3'] },
         senderId,
       );
-      const searchResult = await messageData.findMessagesByTag('tag1')
-      expect(searchResult).toContainEqual(message);
-      expect(searchResult).toContainEqual(message2);
+      const searchResult = await messageData.findMessagesByTag('tag1');
+      expect(searchResult[0]).toEqual(message);
+      expect(searchResult[1]).toEqual(message2);
       expect(searchResult.length).toEqual(2);
       expect(searchResult[0].tags).toContain('tag1');
       expect(searchResult[1].tags).toContain('tag1');
@@ -198,7 +199,7 @@ describe('MessageData', () => {
       expect(deletedMessage.deleted).toEqual(true);
 
       // And that is it now deleted
-      const retrievedMessage = await messageData.getMessage(message.id.toHexString())
+      const retrievedMessage = await messageData.getMessage(message.id.toHexString());
       expect(retrievedMessage.deleted).toEqual(true);
     });
   });
