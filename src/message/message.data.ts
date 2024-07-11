@@ -55,18 +55,15 @@ export class MessageData {
     const query: FilterQuery<ChatMessageDocument> = {
       conversationId: data.conversationId,
     };
-
     if (data.offsetId) {
       query['_id'] = { $lt: data.offsetId };
     }
-
     const result: ChatMessageDocument[] = await this.chatMessageModel
       .find(query)
       .limit(hasMoreLimit)
       .sort({
         _id: -1,
       });
-
     // If the data returned is the same length as the increased limit,
     // we need to ensure we reduce the limit back down to the original
     // limit requested in the api call.
@@ -97,7 +94,6 @@ export class MessageData {
       if (!message) throw new Error('Message not found');
       return chatMessageToObject(message);
     });
-
     return deletedMsg
   }
 

@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ObjectID } from 'mongodb';
 import { MessageData } from './message.data';
 import { ChatMessageModel, ChatMessageSchema } from './models/message.model';
-
 import { ConfigManagerModule } from '../configuration/configuration-manager.module';
 import { getTestConfiguration } from '../configuration/configuration-manager.utils';
 import got from 'got';
@@ -99,16 +98,13 @@ describe('MessageData', () => {
     it('should be defined', () => {
       expect(messageData.getMessage).toBeDefined();
     });
-
     it('successfully gets a message', async () => {
       const conversationId = new ObjectID();
       const sentMessage = await messageData.create(
         { conversationId, text: 'Hello world' },
         senderId,
       );
-
       const gotMessage = await messageData.getMessage(sentMessage.id.toHexString())
-
       expect(gotMessage).toMatchObject(sentMessage)
     });
   });
@@ -117,14 +113,12 @@ describe('MessageData', () => {
     it('should be defined', () => {
       expect(messageData.getMessage).toBeDefined();
     });
-
     it('successfully gets a message and should contain tags', async () => {
       const conversationId = new ObjectID();
       const sentMessage = await messageData.create(
         { conversationId, text: 'Hello world', tags: ['tag1', 'tag2'] },
         senderId,
       );
-
       const gotMessage = await messageData.getMessage(sentMessage.id.toHexString())
       if (!gotMessage.tags) {
         throw new Error('Tags are not defined')

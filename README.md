@@ -86,6 +86,16 @@ We'd love to hear about
 * How you would go about testing
 * What you might do differently
 
+Currently We want to add tags to a conversation Message so we can help users find things that they are interested in by finding all messages that contain that specific tag 
+
+We also allow users to overwrite and update their tags on the message
+
+So first thing solution that comes to my mind allowing a user to a slice of strings for the tags and then we have a hashmap to store the tags as a key in the hashmap and then have an array of message ids that relate a message to a specific tag
+
+But then i noticed we were already storing the tags with the message in the MongoDB databse instance so we can store the key and value in a key-value pair Database  
+
+I implemented some tests to check if the tags were actually getting overwritten and updated and also tested the search function to ensure that all messages that had a specified tag were found
+
 # Additional
 The following docs are from the live service repo. You may find them helpful. 
 
