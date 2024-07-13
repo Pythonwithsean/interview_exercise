@@ -9,6 +9,7 @@ import got from 'got';
 import { Message } from './message';
 import { MessageLogic } from './message.logic';
 import exp from 'constants';
+import { SendMessageEvent } from '../conversation/conversation-channel.socket';
 
 const id = new ObjectID('5fe0cce861c8ea54018385af');
 const conversationId = new ObjectID();
@@ -49,13 +50,15 @@ describe('MessageData', () => {
   });
 
   beforeEach(
+    // Before each test, delete all messages
     async () => {
-      messageData.deleteMany();
+      await messageData.deleteMany();
     }
   );
 
   afterEach(async () => {
-    messageData.deleteMany();
+    // After each test, delete all messages
+    await messageData.deleteMany();
   });
 
   it('should be defined', () => {
@@ -123,8 +126,9 @@ describe('MessageData', () => {
       if (!gotMessage.tags) {
         throw new Error('Tags are not defined')
       }
-      expect(gotMessage.tags).toContain('tag1')
-      expect(gotMessage.tags).toContain('tag2')
+      expect(gotMessage.tags[0]).toBe('tag1');
+      expect(gotMessage.tags[1]).toBe('tag2');
+      expect(gotMessage.tags.length).toBe(2);
     });
   });
 
@@ -134,16 +138,18 @@ describe('MessageData', () => {
     it('should be defined', () => {
       expect(messageData.updateTag).toBeDefined();
     });
+    it('should Get Message be defined', () => {
+      expect(messageData.getMessage).toBeDefined();
+    });
 
     it('successfully updates a message', async () => {
       const conversationId = new ObjectID();
-      const message = await messageData.create(
+      const sentMessage = await messageData.create(
         { conversationId, text: 'Hello world', tags: ['tag1'] },
-        senderId,
+        sender2Id,
       );
-
-      await messageData.updateTag(message.id, ['tag3', 'tag4'])
-      const updatedMessage = await messageData.getMessage(message.id.toHexString())
+      await messageData.updateTag(sentMessage.id, ['tag3', 'tag4']);
+      const updatedMessage = await messageData.getMessage(sentMessage.id.toHexString());
       if (!updatedMessage.tags) {
         throw new Error('Tags are not defined');
       }
@@ -151,18 +157,20 @@ describe('MessageData', () => {
       expect(updatedMessage.tags).toContain('tag4');
       expect(updatedMessage.tags).not.toContain('tag1');
       expect(updatedMessage.tags).not.toContain('tag2');
-      expect(updatedMessage.tags[0]).toEqual('tag3');
-      expect(updatedMessage.tags[1]).toEqual('tag4');
-      expect(updatedMessage.tags.length).toEqual(2);
+      expect(updatedMessage.tags[0]).toBe('tag3');
+      expect(updatedMessage.tags[1]).toBe('tag4');
+      expect(updatedMessage.tags.length).toBe(2);
     });
   });
 
 
   // Test to if all messaeges show up for a specifc tag
   describe('searchOnTags', () => {
+
     it('should be defined', () => {
       expect(messageData.findMessagesByTag).toBeDefined();
     });
+
     it('successfully searches for messages that contains Tag', async () => {
       const conversationId = new ObjectID();
       const message = await messageData.create(
@@ -170,17 +178,35 @@ describe('MessageData', () => {
         senderId,
       );
       const message2 = await messageData.create(
-        { conversationId, text: 'Hello Jack', tags: ['tag1', 'tag3'] },
-        senderId,
+        { conversationId, text: 'Hello Sean', tags: ['tag1', 'tag3'] },
+        sender2Id,
       );
+
+      const message3 = await messageData.create(
+        { conversationId, text: 'Hello Jack', tags: ['tag1', 'tag4'] },
+        sender3Id,
+      );
+
       const searchResult = await messageData.findMessagesByTag('tag1');
-
-      expect(searchResult).toContainEqual(expect.objectContaining({ _id: message.id }));
-      expect(searchResult).toContainEqual(expect.objectContaining({ _id: message2.id }));
-      expect(searchResult.length).toEqual(2);
-      expect(searchResult[0].tags).toContain('tag1');
-      expect(searchResult[1].tags).toContain('tag1');
-
+      expect(searchResult.length).toBe(3);
+      expect(searchResult).toContainEqual(
+        expect.objectContaining({
+          text: 'Hello world',
+          tags: expect.arrayContaining(['tag1', 'tag2']),
+        })
+      );
+      expect(searchResult).toContainEqual(
+        expect.objectContaining({
+          text: 'Hello Sean',
+          tags: expect.arrayContaining(['tag1', 'tag3']),
+        })
+      );
+      expect(searchResult).toContainEqual(
+        expect.objectContaining({
+          text: 'Hello Jack',
+          tags: expect.arrayContaining(['tag1', 'tag4']),
+        })
+      );
     });
   });
 
